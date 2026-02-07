@@ -6,15 +6,10 @@
 
 ## 📸 Project Gallery
 
-### Admin Insights & Reports
 <img width="1920" height="1080" alt="Screenshot 2026-02-07 152948" src="https://github.com/user-attachments/assets/a4e9473f-7d1a-4f56-8eb2-8af2e8f5e764" />
 *Overview of system-wide analytics and user engagement.*
-
-### Organizer & Student Portals
 <img width="1919" height="1079" alt="Screenshot 2026-02-07 153703" src="https://github.com/user-attachments/assets/db63181c-fb8f-45bb-a042-1b0ab8bc6740" />
 <img width="1919" height="1079" alt="Screenshot 2026-02-07 153409" src="https://github.com/user-attachments/assets/65220e6b-225d-4c94-b262-49f8e61bd047" />
-
-### Dynamic Certification System
 <img src="https://github.com/user-attachments/assets/52f79eb8-c1c3-40d2-a895-97909cebf6c9" width="100%" alt="Certificate Configuration" />
 <img width="1919" height="1079" alt="Screenshot 2026-02-07 153624" src="https://github.com/user-attachments/assets/8efca5db-3cff-4784-8fb4-26b031db33c4" />
 <img width="1886" height="1056" alt="Screenshot 2026-02-07 153748" src="https://github.com/user-attachments/assets/085e82e0-6e95-488e-89d1-cef15e7ec4ab" />
