@@ -14,8 +14,6 @@ app.use(cors());
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
-/* -------------------- DB -------------------- */
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
@@ -32,7 +30,6 @@ mongoose
       }
     }
 
-    // Initialize Global Counter
     const counter = await Counter.findOne({ name: "certCode" });
     if (!counter) {
       await Counter.create({ name: "certCode", seq: 0 });
@@ -41,7 +38,6 @@ mongoose
   })
   .catch((err) => console.error(err));
 
-/* -------------------- MODELS -------------------- */
 const CounterSchema = new mongoose.Schema({
   name: String,
   seq: Number,
@@ -88,7 +84,6 @@ const User = mongoose.model("User", UserSchema);
 const Event = mongoose.model("Event", EventSchema);
 const Certificate = mongoose.model("Certificate", CertificateSchema);
 
-/* -------------------- AUTH MIDDLEWARE -------------------- */
 const auth = (roles = []) => (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -102,7 +97,6 @@ const auth = (roles = []) => (req, res, next) => {
   }
 };
 
-/* -------------------- MULTER CONFIG -------------------- */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
@@ -112,7 +106,40 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* -------------------- STUDENT: CLAIM CERTIFICATE -------------------- */
+app.put("/api/events/:id", auth(["organizer"]), upload.array("images", 5), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findById(id);
+
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    if (event.organizerId.toString() !== req.user.id) return res.status(403).json({ message: "Unauthorized" });
+
+    const { title, description, startDate, endDate, status } = req.body;
+    
+    const updateData = {};
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
+    if (startDate) updateData.startDate = startDate;
+    if (endDate) updateData.endDate = endDate;
+    if (status) updateData.status = status;
+
+    if (req.files && req.files.length > 0) {
+      updateData.images = req.files.map((f) => `/uploads/${f.filename}`);
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    );
+
+    res.json(updatedEvent);
+  } catch (err) {
+    console.error("Update Event Error:", err);
+    res.status(500).json({ message: "Server error while updating event" });
+  }
+});
+
 app.post("/api/events/:id/claim", auth(["student"]), async (req, res) => {
   try {
     const { id } = req.params;
@@ -166,7 +193,6 @@ app.post("/api/events/:id/claim", auth(["student"]), async (req, res) => {
   }
 });
 
-/* -------------------- ORGANIZER: EXCEL REPORT -------------------- */
 app.get("/api/events/:id/report", auth(["organizer"]), async (req, res) => {
   try {
     const event = await Event.findById(req.params.id).populate("registeredStudents");
@@ -203,7 +229,6 @@ app.get("/api/events/:id/report", auth(["organizer"]), async (req, res) => {
   } catch (err) { res.status(500).send("Error generating report"); }
 });
 
-/* -------------------- ORGANIZER: PROFILE -------------------- */
 app.get("/api/organizer/profile", auth(["organizer"]), async (req, res) => {
   res.json(await User.findById(req.user.id));
 });
@@ -214,7 +239,6 @@ app.put("/api/organizer/profile", auth(["organizer"]), async (req, res) => {
   res.json({ success: true });
 });
 
-/* -------------------- ORGANIZER: EVENT MANAGEMENT -------------------- */
 app.get("/api/events/my", auth(["organizer"]), async (req, res) => {
   res.json(await Event.find({ organizerId: req.user.id }));
 });
@@ -255,7 +279,6 @@ app.delete("/api/events/:id", auth(["organizer"]), async (req, res) => {
   res.json({ success: true });
 });
 
-/* -------------------- STUDENT: EVENT MANAGEMENT -------------------- */
 app.post("/api/events/register/:id", auth(["student"]), async (req, res) => {
   const event = await Event.findById(req.params.id);
   if (!event) return res.sendStatus(404);
@@ -280,8 +303,6 @@ app.put("/api/student/profile", auth(["student"]), async (req, res) => {
   res.json({ success: true });
 });
 
-/* -------------------- ADMIN: DASHBOARD & REPORTS -------------------- */
-/* --- Replace your existing /api/admin/stats route with this --- */
 app.get("/api/admin/stats", auth(["admin"]), async (req, res) => {
   try {
     const students = await User.countDocuments({ role: "student" });
@@ -317,7 +338,6 @@ app.get("/api/admin/events-report", auth(["admin"]), async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
-/* -------------------- GENERAL -------------------- */
 app.get("/api/events", async (req, res) => {
   res.json(await Event.find().populate("organizerId", "username").populate("registeredStudents", "name username email"));
 });
@@ -342,12 +362,10 @@ app.post("/api/register", async (req, res) => {
   res.json({ success: true });
 });
 
-/* -------------------- ADMIN: DELETE USER -------------------- */
 app.delete("/api/admin/user/:id", auth(["admin"]), async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Prevent admin from deleting themselves (if their ID is stored in the token)
     if (id === req.user.id) {
       return res.status(400).json({ message: "Admin cannot delete their own account." });
     }
@@ -364,7 +382,6 @@ app.delete("/api/admin/user/:id", auth(["admin"]), async (req, res) => {
   }
 });
 
-/* -------------------- ADMIN: CREATE USER -------------------- */
 app.post("/api/admin/create-user", auth(["admin"]), async (req, res) => {
   try {
     const { username, password, role, email } = req.body;
@@ -375,7 +392,6 @@ app.post("/api/admin/create-user", auth(["admin"]), async (req, res) => {
       return res.status(400).json({ message: "Username already taken" });
     }
 
-    // Create the new user
     const newUser = await User.create({
       username,
       password, // In a real app, hash this with bcrypt
