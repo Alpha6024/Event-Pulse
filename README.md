@@ -7,12 +7,12 @@
 ## 📸 Project Gallery
 
 ### Admin Insights & Reports
-<img src="https://github.com/user-attachments/assets/e38d0d6b-fb97-46a6-b006-f3db510f4030" width="100%" alt="Admin Dashboard Stats" />
+<img width="1920" height="1080" alt="Screenshot 2026-02-07 152948" src="https://github.com/user-attachments/assets/a4e9473f-7d1a-4f56-8eb2-8af2e8f5e764" />
 *Overview of system-wide analytics and user engagement.*
 
 ### Organizer & Student Portals
-<img src="https://github.com/user-attachments/assets/c5322799-9a2c-48cd-a5f5-5a29ba702a77" width="100%" alt="Event Management" />
 <img src="https://github.com/user-attachments/assets/2c655551-8ee8-463d-8101-89fd13dcd6d3" width="100%" alt="User Interface" />
+<img width="1919" height="1079" alt="Screenshot 2026-02-07 153409" src="https://github.com/user-attachments/assets/65220e6b-225d-4c94-b262-49f8e61bd047" />
 
 ### Dynamic Certification System
 <img src="https://github.com/user-attachments/assets/52f79eb8-c1c3-40d2-a895-97909cebf6c9" width="100%" alt="Certificate Configuration" />
@@ -55,7 +55,7 @@
 
 ### 1. Clone the Project
 
-git clone [https://github.com/Alpha6024/EventPulse.git](https://github.com/Alpha6024/EventPulse.git)
+git clone [https://github.com/Alpha6024/EventPulse.git](https://github.com/Alpha6024/Event-Pulse.git)
 cd EventPulse
 
 ### 2. Backend Setup
